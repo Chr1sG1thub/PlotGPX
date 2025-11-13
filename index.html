@@ -2,10 +2,10 @@
 <html>
 <head>
   <title>Leaflet GPX Example</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.5.0/gpx.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-gpx@1.7.1/leaflet-gpx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.polylineDecorator/1.7.0/leaflet.polylineDecorator.min.js"></script>
 </head>
 <body>
   <div id="map" style="height: 500px;"></div>
@@ -32,25 +32,37 @@ const locations = [
         endIconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-red.png',
         shadowUrl: 'https://leafletjs.com/examples/custom-icons/leaf-shadow.png'
       }
-    }).on('loaded', function(e) {
-      const gpxLayer = e.target; // Leaflet polyline layer of the GPX track
-//console.log(gpxLayer instanceof L.Polyline);  // should be true
-const polyline = gpxLayer.getLayers ? gpxLayer.getLayers().find(layer => layer instanceof L.Polyline) : gpxLayer;
- map.fitBounds(e.target.getBounds());
-  const decorator = L.polylineDecorator(polyline, {
-    patterns: [
-      {
-        offset: '5%',
-        repeat: '10%',
-        symbol: L.Symbol.arrowHead({
-          pixelSize: 10,
-          polygon: true,
-          pathOptions: { stroke: true, color: 'red', weight: 2 }
-        })
+  .on('loaded', function (e) {
+    const gpxLayer = e.target;
+    map.fitBounds(gpxLayer.getBounds());
+
+    // Find all polylines (tracks and route lines) in the layer group
+    const polylines = [];
+    gpxLayer.eachLayer(function (layer) {
+      if (layer instanceof L.Polyline) {
+        polylines.push(layer);
       }
-    ]
+    });
+
+    if (polylines.length === 0) {
+      console.error('No polylines found in GPX layer!');
+      return;
+    }
+
+    polylines.forEach(function (polyline) {
+      L.polylineDecorator(polyline, {
+        patterns: [{
+          offset: '5%',
+          repeat: '12%',
+          symbol: L.Symbol.arrowHead({
+            pixelSize: 12,
+            polygon: true,
+            pathOptions: { color: 'red', weight: 2, opacity: 1 }
+          })
+        }]
+      }).addTo(map);
+    });
   }).addTo(map);
-   }).addTo(map);
 
     // Add markers for each location
 locations.forEach(loc => {
