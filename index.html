@@ -31,7 +31,7 @@ const locations = [
         startIconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-green.png',
         endIconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-red.png',
         shadowUrl: 'https://leafletjs.com/examples/custom-icons/leaf-shadow.png'
-      }
+      })
   .on('loaded', function (e) {
     const gpxLayer = e.target;
     map.fitBounds(gpxLayer.getBounds());
@@ -42,7 +42,7 @@ const locations = [
       if (layer instanceof L.Polyline) {
         polylines.push(layer);
       }
-    });
+    }); //gpxLayer.eachLayer
 
     if (polylines.length === 0) {
       console.error('No polylines found in GPX layer!');
@@ -58,11 +58,11 @@ const locations = [
             pixelSize: 12,
             polygon: true,
             pathOptions: { color: 'red', weight: 2, opacity: 1 }
-          })
-        }]
-      }).addTo(map);
-    });
-  }).addTo(map);
+          }) //symbol: L.Symbol.arrowHead
+        }] //patterns
+      }).addTo(map); //L.polylineDecorator
+    }); //polylines.forEach
+  }).addTo(map); //.on('loaded'
 
     // Add markers for each location
 locations.forEach(loc => {
