@@ -32,8 +32,22 @@ const locations = [
         shadowUrl: 'https://leafletjs.com/examples/custom-icons/leaf-shadow.png'
       }
     }).on('loaded', function(e) {
-      map.fitBounds(e.target.getBounds());
-    }).addTo(map);
+      const gpxLayer = e.target; // Leaflet polyline layer of the GPX track
+ map.fitBounds(e.target.getBounds());
+  const decorator = L.polylineDecorator(gpxLayer, {
+    patterns: [
+      {
+        offset: '5%',
+        repeat: '10%',
+        symbol: L.Symbol.arrowHead({
+          pixelSize: 10,
+          polygon: false,
+          pathOptions: { stroke: true, color: 'red', weight: 2 }
+        })
+      }
+    ]
+  }).addTo(map);
+   }).addTo(map);
 
     // Add markers for each location
 locations.forEach(loc => {
