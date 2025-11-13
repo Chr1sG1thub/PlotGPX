@@ -1,71 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Leaflet GPX Example</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <meta charset="UTF-8" />
+  <title>Leaflet GPX with Arrowheads Example</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 500px; width: 100%; }
+  </style>
 </head>
 <body>
- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="leaflet-gpx.js"></script>
-  <script src="decorator.js"></script>
 
-  <div id="map" style="height: 500px;"></div>
+<div id="map"></div>
 
-  <script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Include local copies of these plugins in your project folder -->
+<script src="js/leaflet-gpx.min.js"></script>
+<script src="js/leaflet.polylineDecorator.min.js"></script>
+
+<script>
 const locations = [
   { name: "Alenya", lat: 42.63980194	, lon: 2.973538916 },
   { name: "Théza", lat: 42.6383408	, lon: 2.9512366 },
   { name: "Saint-Cyprien", lat: 42.6403122	, lon: 3.032468531 }
 ];
-    // Create the Leaflet map
-    var map = L.map('map').setView([45.0, 0], 5);
+  const map = L.map('map').setView([43.6, 2], 10);
 
-    // Add a base tile layer (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18
-    }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
 
-    // Load and add the GPX track (replace 'path/to/your.gpx' with your GPX file URL)
-    new L.GPX('Thuir - Canohes - Villeneuve-de-la-Raho - Theza - Alenya - St-Cyprien (AR).gpx', {
-      async: true})
-//      marker_options: {
-  //      startIconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-green.png',
-//        endIconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-red.png',
-//        shadowUrl: 'https://leafletjs.com/examples/custom-icons/leaf-shadow.png'
-//      }
-  .on('loaded', function (e) {
+  // Replace 'yourtrack.gpx' with the relative path to your local GPX file
+  new L.GPX('Thuir - Canohes - Villeneuve-de-la-Raho - Theza - Alenya - St-Cyprien (AR).gpx', { async: true }).on('loaded', function(e) {
     const gpxLayer = e.target;
     map.fitBounds(gpxLayer.getBounds());
 
-    // Find all polylines (tracks and route lines) in the layer group
-    const polylines = [];
-    gpxLayer.eachLayer(function (layer) {
+    gpxLayer.eachLayer(layer => {
       if (layer instanceof L.Polyline) {
-        polylines.push(layer);
+        L.polylineDecorator(layer, {
+          patterns: [{
+            offset: '5%',
+            repeat: '12%',
+            symbol: L.Symbol.arrowHead({
+              pixelSize: 12,
+              polygon: true,
+              pathOptions: { color: 'red', weight: 2 }
+            })
+          }]
+        }).addTo(map);
       }
-    }); //gpxLayer.eachLayer
-
-    if (polylines.length === 0) {
-      console.error('No polylines found in GPX layer!');
-      return;
-    }
-
-    polylines.forEach(function (polyline) {
-      L.polylineDecorator(polyline, {
-        patterns: [{
-          offset: '5%',
-          repeat: '12%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: true,
-            pathOptions: { color: 'red', weight: 2, opacity: 1 }
-          }) //symbol: L.Symbol.arrowHead
-        }] //patterns
-      }).addTo(map); //L.polylineDecorator
-    }); //polylines.forEach
-  }).addTo(map); //.on('loaded'
-
-    // Add markers for each location
+    });
+  }).addTo(map);
+  
 locations.forEach(loc => {
  const myIcon = L.divIcon({
     className: 'custom-div-icon',
@@ -76,7 +61,9 @@ locations.forEach(loc => {
 
   L.marker([loc.lat, loc.lon], { icon: myIcon }).addTo(map);
 });
-    
-  </script>
+</script>
+
 </body>
 </html>
+
+
