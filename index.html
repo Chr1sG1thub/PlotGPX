@@ -39,7 +39,7 @@ const locations = [
 locations.forEach(loc => {
  const myIcon = L.divIcon({
     className: 'custom-div-icon',
-    html: `<div style="font-color: purple;">${loc.name}</div>`,
+    html: `<span style="font-color: violet;"><strong>${loc.name}</strong></span>`,
     iconSize: [100, 24],
     iconAnchor: [50, 12]
   });
