@@ -41,7 +41,7 @@ locations.forEach(loc => {
     className: 'custom-div-icon',
     html: `<span style="font-color: violet;"><strong>${loc.name}</strong></span>`,
     iconSize: [100, 24],
-    iconAnchor: [50, 12]
+    iconAnchor: [100, 24]
   });
 
   L.marker([loc.lat, loc.lon], { icon: myIcon }).addTo(map);
