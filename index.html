@@ -34,9 +34,10 @@ const locations = [
       }
     }).on('loaded', function(e) {
       const gpxLayer = e.target; // Leaflet polyline layer of the GPX track
-console.log(gpxLayer instanceof L.Polyline);  // should be true
+//console.log(gpxLayer instanceof L.Polyline);  // should be true
+const polyline = gpxLayer.getLayers ? gpxLayer.getLayers().find(layer => layer instanceof L.Polyline) : gpxLayer;
  map.fitBounds(e.target.getBounds());
-  const decorator = L.polylineDecorator(gpxLayer, {
+  const decorator = L.polylineDecorator(polyline, {
     patterns: [
       {
         offset: '5%',
