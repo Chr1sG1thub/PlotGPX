@@ -4,8 +4,8 @@
   <title>Leaflet GPX Example</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.5.0/gpx.min.js"></script>
   <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.5.0/gpx.min.js"></script>
 </head>
 <body>
   <div id="map" style="height: 500px;"></div>
@@ -34,6 +34,7 @@ const locations = [
       }
     }).on('loaded', function(e) {
       const gpxLayer = e.target; // Leaflet polyline layer of the GPX track
+console.log(gpxLayer instanceof L.Polyline);  // should be true
  map.fitBounds(e.target.getBounds());
   const decorator = L.polylineDecorator(gpxLayer, {
     patterns: [
