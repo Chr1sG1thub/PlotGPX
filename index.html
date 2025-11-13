@@ -40,8 +40,8 @@ locations.forEach(loc => {
  const myIcon = L.divIcon({
     className: 'custom-div-icon',
     html: `<span style="font-color: violet;"><strong>${loc.name}</strong></span>`,
-    iconSize: [100, 24],
-    iconAnchor: [100, 24]
+    iconSize: [10, 24],
+    iconAnchor: [5, 0]
   });
 
   L.marker([loc.lat, loc.lon], { icon: myIcon }).addTo(map);
