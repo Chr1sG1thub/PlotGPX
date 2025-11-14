@@ -14,11 +14,36 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <!-- Include local copies of these plugins in your project folder -->
-<script src="leaflet-gpx.js"></script>
-<script src="decorator.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.2.0/gpx.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.min.js"></script>
 
 <script>
-const locations = [
+  function findPolylinesInGPXLayer(gpxLayer) {
+  let polylines = [];
+
+  // Iterate first-level sublayers
+  Object.values(gpxLayer._layers).forEach(firstLevelLayer => {
+    if (firstLevelLayer._layers) {
+      // It’s a nested LayerGroup: iterate inside
+      Object.values(firstLevelLayer._layers).forEach(secondLevelLayer => {
+        if (Array.isArray(secondLevelLayer._latlngs) && secondLevelLayer._latlngs.length > 1) {
+          polylines.push(secondLevelLayer);
+        }
+      });
+    } else {
+      // If no nested _layers, check if this layer itself has latlngs
+      if (Array.isArray(firstLevelLayer._latlngs) && firstLevelLayer._latlngs.length > 1) {
+        polylines.push(firstLevelLayer);
+      }
+    }
+  });
+
+  return polylines;
+}
+  
+
+  
+  const locations = [
   { name: "Alenya", lat: 42.63980194	, lon: 2.973538916 },
   { name: "Théza", lat: 42.6383408	, lon: 2.9512366 },
   { name: "Saint-Cyprien", lat: 42.6403122	, lon: 3.032468531 }
@@ -29,26 +54,39 @@ const locations = [
     attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
-  // Replace 'yourtrack.gpx' with the relative path to your local GPX file
-  new L.GPX('Thuir - Canohes - Villeneuve-de-la-Raho - Theza - Alenya - St-Cyprien (AR).gpx', { async: true }).on('loaded', function(e) {
+  new L.GPX('Bélesta - Cassagnes - Lansac - St Arnac - Ansignan - Caramany - Bélesta - Montalba.gpx',
+            { async: true,   markers: {
+    startIcon: 'location.ico',
+    endIcon: 'location.ico'
+  }, marker_options: {
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
+  } }).on('loaded', function(e) {
     const gpxLayer = e.target;
     map.fitBounds(gpxLayer.getBounds());
 
-    gpxLayer.eachLayer(layer => {
-      if (layer instanceof L.Polyline) {
-        L.polylineDecorator(layer, {
-          patterns: [{
-            offset: '5%',
-            repeat: '12%',
-            symbol: L.Symbol.arrowHead({
-              pixelSize: 12,
-              polygon: true,
-              pathOptions: { color: 'red', weight: 2 }
-            })
-          }]
-        }).addTo(map);
+const polylines = findPolylinesInGPXLayer(gpxLayer);
+console.log('Found polylines:', polylines);
+polylines.forEach(polyline => {
+  L.polylineDecorator(polyline, {
+patterns: [{
+    offset: '5%',
+    repeat: '12%',
+    symbol: L.Symbol.arrowHead({
+      pixelSize: 12,
+      polygon: true,   // filled arrowhead
+      pathOptions: {
+        color: 'blue',      // border color
+        weight: 2,         // border thickness
+        opacity: 1,        // border opacity
+        fill: true,        // enable fill
+        fillColor: 'blue',  // fill color, usually same as border color
+        fillOpacity: 1     // fill opacity
       }
-    });
+    })
+  }]
+  }).addTo(map);
+});
   }).addTo(map);
   
 locations.forEach(loc => {
