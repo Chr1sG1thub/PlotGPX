@@ -66,7 +66,7 @@
     map.fitBounds(gpxLayer.getBounds());
 
 const polylines = findPolylinesInGPXLayer(gpxLayer);
-console.log('Found polylines:', polylines);
+//console.log('Found polylines:', polylines);
 polylines.forEach(polyline => {
   L.polylineDecorator(polyline, {
 patterns: [{
@@ -90,6 +90,7 @@ patterns: [{
   }).addTo(map);
   
 locations.forEach(loc => {
+  console.log(loc);
  const myIcon = L.divIcon({
     className: 'custom-div-icon',
     html: `<span style="color: blue;background-color: white; opacity: 0.5"><strong>${loc.name}</strong></span>`,
